@@ -8,6 +8,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.textscrapper.dto.OCRDataDTO;
 
@@ -15,31 +20,38 @@ import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 
+@RestController
+@RequestMapping("/textextractor")
 public class OCRExtractor {
-    public static void main(String[] args) {
-        File imageFile = new File("../javaprojects/text_images/test1.png"); // Replace with your image path
+
+    @GetMapping("/gettext/{id}")
+    public String displayTextfromImage(@PathVariable int id) {
+        System.out.println("Inside displayTextFromImage" + id);
+        String imageFilePath = "C:\\text_extractor\\input\\" + id + ".png";
+        System.out.println("Path = " + imageFilePath);
+        File imageFile = new File(imageFilePath); // Replace with your image path
         ITesseract tesseract = new Tesseract();
 
-        // Set Tesseract OCR data path (update path where Tesseract is installed)
-        // tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata"); // Change
-        // based on your OS
-        // No need to set a specific datapath; Tess4J handles it internally
+        String extractedText = "";
+
         tesseract.setDatapath("C:\\testdata");
         tesseract.setLanguage("eng"); // Set English as the language
 
         try {
-            String extractedText = tesseract.doOCR(imageFile);
+            extractedText = tesseract.doOCR(imageFile);
 
             OCRDataDTO dto = processExtractedText(extractedText);
             System.out.println("DTO Data: " + dto);
             System.out.println("Extracted Text: \n" + extractedText);
 
             // Save DTO data to Excel
-            saveToExcel(dto, "C:\\output\\output.xlsx");
+            saveToExcel(dto, "C:\\text_extractor\\output\\" + id + ".xlsx");
 
         } catch (TesseractException e) {
             System.err.println("Error during OCR: " + e.getMessage());
         }
+
+        return extractedText;
     }
 
     private static OCRDataDTO processExtractedText(String text) {
