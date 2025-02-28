@@ -1,4 +1,4 @@
-package com.personal.textscrapper.util;
+package com.personal.textscrapper.utility;
 
 import java.util.ArrayList;
 import java.util.Arrays;

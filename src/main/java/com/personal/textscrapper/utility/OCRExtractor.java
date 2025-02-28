@@ -1,4 +1,4 @@
-package com.personal.textscrapper.util;
+package com.personal.textscrapper.utility;
 
 import java.io.BufferedWriter;
 import java.io.File;

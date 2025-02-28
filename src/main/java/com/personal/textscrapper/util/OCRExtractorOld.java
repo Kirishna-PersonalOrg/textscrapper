@@ -21,8 +21,8 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 
 @RestController
-@RequestMapping("/textextractor")
-public class OCRExtractor {
+@RequestMapping("/textextractorold")
+public class OCRExtractorOld {
 
     @GetMapping("/gettext/{id}")
     public String displayTextfromImage(@PathVariable int id) {
