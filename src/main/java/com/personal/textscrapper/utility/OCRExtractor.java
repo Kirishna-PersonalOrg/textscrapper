@@ -33,7 +33,7 @@ public class OCRExtractor {
 
         
         ITesseract tesseract = new Tesseract();
-        tesseract.setDatapath("C:\\text_extractor\\testdata");
+        tesseract.setDatapath("C:\\Program Files\\TesseractOCR\\testdata");
         tesseract.setLanguage("eng");
       
         // Use best OCR Engine Mode

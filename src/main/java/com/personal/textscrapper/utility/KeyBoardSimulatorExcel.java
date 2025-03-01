@@ -1,58 +1,69 @@
 package com.personal.textscrapper.utility;
 
-import java.awt.Robot;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Iterator;
 
+public class KeyBoardSimulatorExcel {
 
-    public class KeyBoardSimulator {
+    private static final String EXCEL_FILE_PATH = "C:\\text_extractor\\output\\output.xlsx"; // Path to your Excel file
 
     public static void main(String[] args) {
-        System.out.println("Inside performKeyBoardSimulation");
-
         try {
             Robot robot = new Robot();
-            String filePath = "C:\\text_extractor\\output\\formatted_file.txt";
-            List<String> lines = readLinesFromFile(filePath);
-
-            if (lines.isEmpty()) {
-                System.out.println("No lines found in the file.");
-                return;
-            }
+            FileInputStream file = new FileInputStream(new File(EXCEL_FILE_PATH));
+            Workbook workbook = new XSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
             System.out.println("Typing will start in 7 seconds...");
-            Thread.sleep(7000); // Initial delay
+            Thread.sleep(7000); // Initial delay before starting
 
-            for (int i = 0; i < lines.size(); i++) {
-                typeLine(robot, lines.get(i));
+            Iterator<Row> rowIterator = sheet.iterator();
+            if (rowIterator.hasNext()) rowIterator.next(); // Skip header row
 
-                if (i < lines.size() - 1) { // If not the last line
-                    Thread.sleep(100); // Delay after each line
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                
+                for (Cell cell : row) {
+                    String cellValue = getStringCellValue(cell);
+                    typeText(robot, cellValue);
                     pressTab(robot); // Move to next field
+                    Thread.sleep(200); // Short delay after typing
                 }
+
+                // Show confirmation dialog before moving to the next row
+                int option = showConfirmationDialog();
+                if (option == JOptionPane.NO_OPTION) {
+                    System.out.println("Process stopped by user.");
+                    break; // Stop execution
+                }
+                
             }
+
+            workbook.close();
+            file.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static List<String> readLinesFromFile(String filePath) throws IOException {
-        List<String> lines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                lines.add(line.trim());
-            }
-        }
-        return lines;
+    private static String getStringCellValue(Cell cell) {
+        if (cell == null) return "";
+        cell.setCellType(CellType.STRING); // Ensure all values are treated as strings
+        return cell.getStringCellValue().trim();
     }
 
-    private static void typeLine(Robot robot, String line) throws InterruptedException {
-        for (char ch : line.toCharArray()) {
+    private static void typeText(Robot robot, String text) throws InterruptedException {
+        for (char ch : text.toCharArray()) {
             typeCharacter(robot, ch);
-            //Thread.sleep(300); // Delay between characters
+            Thread.sleep(100); // Small delay between characters
         }
     }
 
@@ -63,15 +74,11 @@ import java.util.*;
 
         int keyCode = getKeyCode(ch);
         if (keyCode != -1) {
-            typeKey(robot, keyCode);
+            robot.keyPress(keyCode);
+            robot.keyRelease(keyCode);
         }
 
         if (shiftNeeded) robot.keyRelease(KeyEvent.VK_SHIFT);
-    }
-
-    private static void typeKey(Robot robot, int keyCode) {
-        robot.keyPress(keyCode);
-        robot.keyRelease(keyCode);
     }
 
     private static void pressTab(Robot robot) {
@@ -79,9 +86,18 @@ import java.util.*;
         robot.keyRelease(KeyEvent.VK_TAB);
     }
 
+    private static int showConfirmationDialog() {
+        return JOptionPane.showConfirmDialog(
+                null,
+                "Review the web form and click Proceed to continue.",
+                "Manual Review Required",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
     private static int getKeyCode(char ch) {
         switch (ch) {
-            // Lowercase letters
             case 'a': case 'A': return KeyEvent.VK_A;
             case 'b': case 'B': return KeyEvent.VK_B;
             case 'c': case 'C': return KeyEvent.VK_C;
@@ -108,8 +124,6 @@ import java.util.*;
             case 'x': case 'X': return KeyEvent.VK_X;
             case 'y': case 'Y': return KeyEvent.VK_Y;
             case 'z': case 'Z': return KeyEvent.VK_Z;
-
-            // Numbers
             case '0': return KeyEvent.VK_0;
             case '1': return KeyEvent.VK_1;
             case '2': return KeyEvent.VK_2;
@@ -120,8 +134,6 @@ import java.util.*;
             case '7': return KeyEvent.VK_7;
             case '8': return KeyEvent.VK_8;
             case '9': return KeyEvent.VK_9;
-
-            // Special characters
             case ' ': return KeyEvent.VK_SPACE;
             case '!': return KeyEvent.VK_1;
             case '@': return KeyEvent.VK_2;
@@ -153,9 +165,7 @@ import java.util.*;
             case '>': return KeyEvent.VK_PERIOD;
             case '/': return KeyEvent.VK_SLASH;
             case '?': return KeyEvent.VK_SLASH;
-
-            default: return -1; // Unsupported characters
+            default: return -1;
         }
     }
 }
-
