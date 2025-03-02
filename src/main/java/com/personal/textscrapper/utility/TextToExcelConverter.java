@@ -95,7 +95,7 @@ public class TextToExcelConverter {
                     row.createCell(1).setCellValue(fileName); // Column 2: File Name
 
                     for (int i = 0; i < lines.size(); i++) {
-                        row.createCell(i + 2).setCellValue(lines.get(i)); // Data starts from column 3
+                        row.createCell(i).setCellValue(lines.get(i)); // Data starts from column 3
                     }
 
                     // Add to the existing entries set

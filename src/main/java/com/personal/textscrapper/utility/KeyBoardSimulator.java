@@ -28,7 +28,7 @@ import java.util.*;
                 typeLine(robot, lines.get(i));
 
                 if (i < lines.size() - 1) { // If not the last line
-                    Thread.sleep(100); // Delay after each line
+                    Thread.sleep(400); // Delay after each line
                     pressTab(robot); // Move to next field
                 }
             }
@@ -52,7 +52,7 @@ import java.util.*;
     private static void typeLine(Robot robot, String line) throws InterruptedException {
         for (char ch : line.toCharArray()) {
             typeCharacter(robot, ch);
-            //Thread.sleep(300); // Delay between characters
+            Thread.sleep(300); // Delay between characters
         }
     }
 

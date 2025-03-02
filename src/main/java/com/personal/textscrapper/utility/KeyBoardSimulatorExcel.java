@@ -34,7 +34,7 @@ public class KeyBoardSimulatorExcel {
                     String cellValue = getStringCellValue(cell);
                     typeText(robot, cellValue);
                     pressTab(robot); // Move to next field
-                    Thread.sleep(200); // Short delay after typing
+                    Thread.sleep(100); // Short delay after typing
                 }
 
                 // Show confirmation dialog before moving to the next row
@@ -63,7 +63,7 @@ public class KeyBoardSimulatorExcel {
     private static void typeText(Robot robot, String text) throws InterruptedException {
         for (char ch : text.toCharArray()) {
             typeCharacter(robot, ch);
-            Thread.sleep(100); // Small delay between characters
+            Thread.sleep(50); // Small delay between characters
         }
     }
 
