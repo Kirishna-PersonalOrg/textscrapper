@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+// Class to convert Text into Excel
 public class TextToExcelConverter {
 
     private static final String BASE_OUTPUT_DIRECTORY = "C:\\text_extractor\\output\\"; // Base directory
